@@ -3,7 +3,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.netxms</groupId>
    <artifactId>zest-rwt</artifactId>
-   <version>2.0.10</version>
+   <version>2.0.11</version>
    <packaging>jar</packaging>
    <name>zest-rwt</name>
    <description>NetXMS Zest port for RWT</description>
@@ -23,12 +23,12 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <build.finalName>${project.artifactId}-${project.version}</build.finalName>
       <lib.scope>compile</lib.scope>
-      <rwt.version>3.18.0</rwt.version>
+      <rwt.version>3.19.0</rwt.version>
    </properties>
    <dependencies>
       <dependency>
-         <groupId>org.eclipse.platform</groupId>
-         <artifactId>org.eclipse.jface</artifactId>
+         <groupId>org.eclipse.rap</groupId>
+         <artifactId>org.eclipse.rap.jface</artifactId>
          <version>${rwt.version}</version>
          <scope>${lib.scope}</scope>
          <exclusions>
@@ -41,7 +41,7 @@
       <dependency>
          <groupId>org.netxms</groupId>
          <artifactId>draw2d-rwt</artifactId>
-         <version>1.5.3</version>
+         <version>1.5.4</version>
          <scope>${lib.scope}</scope>
          <exclusions>
             <exclusion>
