@@ -3,7 +3,7 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: Mateusz Matela - initial API and implementation
  *               Ian Bull
  ******************************************************************************/
@@ -12,9 +12,9 @@ package org.eclipse.gef4.zest.layouts.interfaces;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 
 /**
- * 
+ *
  * @author irbull
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,9 +28,9 @@ public interface LayoutListener {
 	 * true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean) applyLayout(boolean)} will be called on the
 	 * context's main algorithm.LayoutListener
-	 * 
+	 *
 	 * @param context
 	 *            the layout context that fired the event
 	 * @param node
@@ -44,13 +44,13 @@ public interface LayoutListener {
 	 * within observed context. This usually implicates change of position (the
 	 * center of the node) and the receiver should be aware of it (no additional
 	 * {@link #nodeMoved(LayoutContext, NodeLayout)} event will be fired).
-	 * 
+	 *
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean) applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
-	 * 
+	 *
 	 * @param context
 	 *            the layout context that fired the event
 	 * @param node
@@ -64,9 +64,9 @@ public interface LayoutListener {
 	 * changed within observed context. If true is returned, it means that the
 	 * receiving listener has intercepted this event. Intercepted events will
 	 * not be passed to the rest of the listeners. If the event is not
-	 * intercepted by any listener, {@link LayoutAlgorithm#applyLayout()
+	 * intercepted by any listener, {@link LayoutAlgorithm#applyLayout(boolean)
 	 * applyLayout()} will be called on the context's main algorithm.
-	 * 
+	 *
 	 * @param context
 	 *            the layout context that fired the event
 	 * @param subgraph
@@ -80,13 +80,13 @@ public interface LayoutListener {
 	 * within observed context. This usually implicates change of position (the
 	 * center of the node) and the receiver should be aware of it (no additional
 	 * {@link #nodeMoved(LayoutContext, NodeLayout)} event will be fired).
-	 * 
+	 *
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean) applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
-	 * 
+	 *
 	 * @param context
 	 *            the layout context that fired the event
 	 * @param subgraph
