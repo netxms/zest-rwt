@@ -3,22 +3,25 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.netxms</groupId>
    <artifactId>zest-rwt</artifactId>
-   <version>2.0.11</version>
+   <version>2.0.12</version>
    <packaging>jar</packaging>
    <name>zest-rwt</name>
    <description>NetXMS Zest port for RWT</description>
    <url>https://github.com/netxms/zest-rwt</url>
+
    <licenses>
       <license>
          <name>GNU General Public License (GPL) v2</name>
          <url>http://www.gnu.org/licenses/gpl2.txt</url>
       </license>
    </licenses>
+
    <scm>
       <connection>scm:git:https://github.com/netxms/zest-rwt</connection>
       <developerConnection>scm:git:ssh://github.com/netxms/zest-rwt</developerConnection>
       <url>https://github.com/netxms/zest-rwt</url>
    </scm>
+
    <developers>
       <developer>
          <id>alex.kirhenshtein</id>
@@ -32,10 +35,12 @@
          <timezone>Europe/Riga</timezone>
       </developer>
    </developers>
+
    <issueManagement>
       <system>GitHub Issues</system>
       <url>https://github.com/netxms/zest-rwt/issues</url>
    </issueManagement>
+
    <distributionManagement>
       <repository>
           <id>ossrh</id>
@@ -47,48 +52,38 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <build.finalName>${project.artifactId}-${project.version}</build.finalName>
       <lib.scope>compile</lib.scope>
-      <rwt.version>3.19.0</rwt.version>
+      <rwt.version>3.29.0</rwt.version>
    </properties>
+
    <dependencies>
       <dependency>
          <groupId>org.eclipse.rap</groupId>
          <artifactId>org.eclipse.rap.jface</artifactId>
          <version>${rwt.version}</version>
          <scope>${lib.scope}</scope>
-         <exclusions>
-            <exclusion>
-               <groupId>org.eclipse.platform</groupId>
-               <artifactId>org.eclipse.swt</artifactId>
-            </exclusion>
-         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.netxms</groupId>
          <artifactId>draw2d-rwt</artifactId>
-         <version>1.5.4</version>
+         <version>3.10.103</version>
          <scope>${lib.scope}</scope>
-         <exclusions>
-            <exclusion>
-               <groupId>org.eclipse.platform</groupId>
-               <artifactId>org.eclipse.swt</artifactId>
-            </exclusion>
-         </exclusions>
       </dependency>
    </dependencies>
+
    <build>
       <finalName>${build.finalName}</finalName>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.0</version>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
+            <version>3.13.0</version>
             <configuration>
-                <release>11</release>
+                <release>17</release>
             </configuration>
          </plugin>
          <plugin>
@@ -151,23 +146,34 @@
                </tags>
             </configuration>
          </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.2.4</version>
-            <executions>
-               <execution>
-                  <id>sign-artifacts</id>
-                  <phase>verify</phase>
-                  <goals>
-                     <goal>sign</goal>
-                  </goals>
-               </execution>
-            </executions>
-             <configuration>
-                 <repositoryId>ossrh</repositoryId>
-             </configuration>
-         </plugin>
       </plugins>
    </build>
+
+   <profiles>
+      <profile>
+         <id>publish</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>3.2.4</version>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+                  <configuration>
+                     <repositoryId>ossrh</repositoryId>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
 </project>

@@ -427,7 +427,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
 		HashMap entityToPosition = new HashMap();
 		for (int i = 0; i < entities.length; i++) {
-			entityToPosition.put(entities[i], new Integer(i));
+			entityToPosition.put(entities[i], Integer.valueOf(i));
 		}
 
 		ConnectionLayout[] connections = context.getConnections();
