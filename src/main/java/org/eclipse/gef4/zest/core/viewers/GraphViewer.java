@@ -48,11 +48,14 @@ import org.eclipse.swt.widgets.Widget;
  * @author Chris Callendar
  * 
  * @noextend This class is not intended to be subclassed by clients.
+ * 
+ * @serial exclude
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class GraphViewer extends AbstractStructuredGraphViewer implements
 		ISelectionProvider {
 
+	/** The graph widget this viewer displays its model in. */
 	protected Graph graph = null;
 	private IStylingGraphModelFactory modelFactory = null;
 	private List selectionChangedListeners = null;
@@ -61,6 +64,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * Initializes the viewer.
 	 * 
 	 * @param composite
+	 *            parent composite the graph widget is created in
 	 * @param style
 	 *            the style for the viewer and for the layout algorithm
 	 * @see ZestStyles#GESTURES_DISABLED
@@ -138,7 +142,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	/**
 	 * Gets the styles for this structuredViewer
 	 * 
-	 * @return
+	 * @return SWT style bits of the underlying graph widget
 	 */
 	public int getStyle() {
 		return this.graph.getStyle();

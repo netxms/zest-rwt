@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * 
  * @author Del Myers
  * 
+ * @serial exclude
  */
 // @tag zest.bug.156286-Zooming.fix : create a contribution item that can set
 // zooming on Zest views.

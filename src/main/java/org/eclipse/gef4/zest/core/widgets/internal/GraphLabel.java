@@ -220,6 +220,11 @@ public class GraphLabel extends Label implements IStyleableFigure {
 		lightenColor.dispose();
 	}
 
+	/**
+	 * Returns background colour the text is drawn on.
+	 * 
+	 * @return background colour the text is drawn on
+	 */
 	protected Color getBackgroundTextColor() {
 		return getBackgroundColor();
 	}
@@ -258,26 +263,47 @@ public class GraphLabel extends Label implements IStyleableFigure {
 		adjustBoundsToFit();
 	}
 
+	/**
+	 * @return color of the border drawn around the label
+	 */
 	public Color getBorderColor() {
 		return borderColor;
 	}
 
+	/**
+	 * @param c
+	 *            color of the border drawn around the label
+	 */
 	public void setBorderColor(Color c) {
 		this.borderColor = c;
 	}
 
+	/**
+	 * @return width of the border in pixels
+	 */
 	public int getBorderWidth() {
 		return borderWidth;
 	}
 
+	/**
+	 * @param width
+	 *            width of the border in pixels
+	 */
 	public void setBorderWidth(int width) {
 		this.borderWidth = width;
 	}
 
+	/**
+	 * @return diameter of the rounded corners
+	 */
 	public int getArcWidth() {
 		return arcWidth;
 	}
 
+	/**
+	 * @param arcWidth
+	 *            diameter of the rounded corners
+	 */
 	public void setArcWidth(int arcWidth) {
 		this.arcWidth = arcWidth;
 	}

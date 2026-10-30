@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @author Del Myers
  * @since 2.0
+ * 
+ * @serial exclude
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractStructuredGraphViewer extends
@@ -110,6 +112,13 @@ public abstract class AbstractStructuredGraphViewer extends
 		}
 	}
 
+	/**
+	 * Creates a viewer with the given style for its graph widget and default
+	 * (SWT.NONE) node and connection styles.
+	 * 
+	 * @param graphStyle
+	 *            SWT style bits for the graph widget
+	 */
 	protected AbstractStructuredGraphViewer(int graphStyle) {
 		this.graphStyle = graphStyle;
 		this.connectionStyle = SWT.NONE;
@@ -168,6 +177,11 @@ public abstract class AbstractStructuredGraphViewer extends
 		return nodeStyle;
 	}
 
+	/**
+	 * Returns the graph widget this viewer displays its model in.
+	 * 
+	 * @return the viewer's graph widget
+	 */
 	public Graph getGraphControl() {
 		return (Graph) getControl();
 	}
@@ -203,31 +217,47 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * Equivalent to setLayoutAlgorithm(algorithm, false).
 	 * 
 	 * @param algorithm
+	 *            the layout algorithm
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		setLayoutAlgorithm(algorithm, false);
 	}
 
+	/**
+	 * Returns the user model elements that currently have a node in the
+	 * graph.
+	 * 
+	 * @return model elements of all nodes
+	 */
 	public Object[] getNodeElements() {
 		return this.nodesMap.keySet().toArray();
 	}
 
+	/**
+	 * Returns the user model elements that currently have a connection in the
+	 * graph.
+	 * 
+	 * @return model elements of all connections
+	 */
 	public Object[] getConnectionElements() {
 		return this.connectionsMap.keySet().toArray();
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @return
+	 * @return map from user model elements to their nodes
 	 */
 	public HashMap<Object, GraphItem> getNodesMap() {
 		return this.nodesMap;
 	}
 
 	/**
+	 * Creates a container node for the given model element, unless a node
+	 * already exists for it.
 	 * 
 	 * @param element
-	 * @return
+	 *            user model element to create the container for
+	 * @return the new container, or the existing node for the element
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphNode addGraphModelContainer(Object element) {
@@ -241,10 +271,14 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Creates a node for the given model element inside the given container,
+	 * unless a node already exists for it.
 	 * 
 	 * @param container
+	 *            container to create the node in
 	 * @param element
-	 * @return
+	 *            user model element to create the node for
+	 * @return the new node, or the existing node for the element
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphNode addGraphModelNode(GraphContainer container, Object element) {
@@ -258,10 +292,14 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Creates a node for the given model element, unless a node already exists
+	 * for it.
 	 * 
 	 * @param element
+	 *            user model element to create the node for
 	 * @param figure
-	 * @return
+	 *            custom figure for the node, or null for the default figure
+	 * @return the new node, or the existing node for the element
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphNode addGraphModelNode(Object element, IFigure figure) {
@@ -281,11 +319,16 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Creates a connection between the given nodes for the given model
+	 * element, unless a connection already exists for it.
 	 * 
 	 * @param element
+	 *            user model element to create the connection for
 	 * @param source
+	 *            node the connection starts at
 	 * @param target
-	 * @return
+	 *            node the connection ends at
+	 * @return the new connection, or the existing connection for the element
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphConnection addGraphModelConnection(Object element,
@@ -302,9 +345,12 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Returns the connection created for the given model element.
 	 * 
 	 * @param obj
-	 * @return
+	 *            user model element
+	 * @return the element's connection, or null if there is none or it is
+	 *         disposed
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphConnection getGraphModelConnection(Object obj) {
@@ -315,9 +361,11 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Returns the node created for the given model element.
 	 * 
 	 * @param obj
-	 * @return
+	 *            user model element
+	 * @return the element's node, or null if there is none or it is disposed
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphNode getGraphModelNode(Object obj) {
@@ -326,7 +374,10 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Disposes and forgets the connection created for the given model element.
+	 * 
 	 * @param obj
+	 *            user model element whose connection is removed
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void removeGraphModelConnection(Object obj) {
@@ -340,6 +391,10 @@ public abstract class AbstractStructuredGraphViewer extends
 	}
 
 	/**
+	 * Disposes and forgets the node created for the given model element.
+	 * 
+	 * @param obj
+	 *            user model element whose node is removed
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void removeGraphModelNode(Object obj) {
@@ -428,6 +483,14 @@ public abstract class AbstractStructuredGraphViewer extends
 		return externalSelection;
 	}
 
+	/**
+	 * Finds the graph items (nodes or connections) for each of the given model
+	 * elements.
+	 * 
+	 * @param l
+	 *            user model elements, may be null
+	 * @return graph items for the elements (empty if the list is null)
+	 */
 	protected GraphItem[] /* GraphItem */findItems(List l) {
 		if (l == null) {
 			return new GraphItem[0];
@@ -470,7 +533,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	/**
 	 * Gets the internal model elements that are selected.
 	 * 
-	 * @return
+	 * @return the selected graph items
 	 */
 	protected List getWidgetSelection() {
 		Graph control = (Graph) getControl();
@@ -540,13 +603,17 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * Returns the factory used to create the model. This must not be called
 	 * before the content provider is set.
 	 * 
-	 * @return
+	 * @return the factory building nodes and connections for this viewer
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.
 	 */
 	protected abstract IStylingGraphModelFactory getFactory();
 
+	/**
+	 * Applies the viewer's filters to the graph widget by hiding nodes and
+	 * connections whose elements are filtered out and showing all others.
+	 */
 	protected void filterVisuals() {
 		if (getGraphControl() == null) {
 			return;
@@ -686,6 +753,13 @@ public abstract class AbstractStructuredGraphViewer extends
 		}
 	}
 
+	/**
+	 * Reverts the effect of {@link #reveal(Object)}: removes the highlight
+	 * from all graph items of the given element.
+	 * 
+	 * @param element
+	 *            user model element to unhighlight
+	 */
 	public void unReveal(Object element) {
 		Widget[] items = this.findItems(element);
 		for (int i = 0; i < items.length; i++) {
@@ -711,6 +785,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * model.
 	 * 
 	 * @param connection
+	 *            user model element of the connection to remove
 	 */
 	public void removeRelationship(Object connection) {
 		GraphConnection relationship = (GraphConnection) connectionsMap
@@ -728,6 +803,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * happens.
 	 * 
 	 * @param element
+	 *            user model element to create the node for
 	 */
 	public void addNode(Object element) {
 		if (nodesMap.get(element) == null) {
@@ -801,6 +877,8 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * Converts the list of GraphModelConnection objects into an array and
 	 * returns it.
 	 * 
+	 * @param graph
+	 *            the graph whose connections are returned
 	 * @return GraphModelConnection[]
 	 */
 	protected GraphConnection[] getConnectionsArray(Graph graph) {
@@ -814,6 +892,8 @@ public abstract class AbstractStructuredGraphViewer extends
 	/**
 	 * Converts the list of GraphModelNode objects into an array an returns it.
 	 * 
+	 * @param graph
+	 *            the graph whose nodes are returned
 	 * @return GraphModelNode[]
 	 */
 	protected GraphNode[] getNodesArray(Graph graph) {

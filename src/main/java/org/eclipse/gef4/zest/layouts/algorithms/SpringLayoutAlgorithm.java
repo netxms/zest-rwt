@@ -150,6 +150,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	private double boundsScaleX = 0.2;
 	private double boundsScaleY = 0.2;
 
+	/**
+	 * If true, entities are scaled to fit the bounds of the layout context
+	 * after the iterations complete.
+	 */
 	public boolean fitWithinBounds = true;
 
 	private LayoutContext context;
@@ -189,13 +193,21 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	/**
+	 * Creates a spring layout that resizes entities unless style is
+	 * {@link LayoutStyles#NO_LAYOUT_NODE_RESIZING}.
+	 * 
+	 * @param style layout style flags
 	 * @deprecated Since Zest 2.0, use {@link #SpringLayoutAlgorithm()}.
 	 */
+	@Deprecated
 	public SpringLayoutAlgorithm(int style) {
 		this();
 		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
 	}
 
+	/**
+	 * Creates a spring layout that does not resize entities.
+	 */
 	public SpringLayoutAlgorithm() {
 	}
 
@@ -229,6 +241,13 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		initLayout();
 	}
 
+	/**
+	 * Performs the given number of iterations of the spring simulation and
+	 * applies the resulting locations to the layout context. The simulation is
+	 * initialized first if no iteration has been performed yet.
+	 * 
+	 * @param n number of iterations to perform
+	 */
 	public void performNIteration(int n) {
 		if (iteration == 0) {
 			entities = context.getEntities();
@@ -243,6 +262,11 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		context.flushChanges(false);
 	}
 
+	/**
+	 * Performs one iteration of the spring simulation and applies the
+	 * resulting locations to the layout context. The simulation is initialized
+	 * first if no iteration has been performed yet.
+	 */
 	public void performOneIteration() {
 		if (iteration == 0) {
 			entities = context.getEntities();
@@ -326,7 +350,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	/**
 	 * Gets the max time this algorithm will run for
 	 * 
-	 * @return
+	 * @return maximum running time in milliseconds
 	 */
 	public long getSpringTimeout() {
 		return maxTimeMS;
@@ -335,7 +359,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	/**
 	 * Sets the spring timeout
 	 * 
-	 * @param timeout
+	 * @param timeout maximum running time in milliseconds
 	 */
 	public void setSpringTimeout(long timeout) {
 		maxTimeMS = timeout;
@@ -404,6 +428,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	/**
 	 * Returns whether or not this SpringLayoutAlgorithm will layout the nodes
 	 * randomly before beginning iterations.
+	 * 
+	 * @return true if nodes are placed randomly before iterations start
 	 */
 	public boolean getRandom() {
 		return sprRandom;
@@ -509,19 +535,39 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	}
 
+	/**
+	 * Checks whether another iteration should be performed, advancing the
+	 * iteration counter according to elapsed time first.
+	 * 
+	 * @return true if the iteration limit has not been reached yet
+	 */
 	protected boolean performAnotherNonContinuousIteration() {
 		setSprIterationsBasedOnTime();
 		return (iteration <= sprIterations);
 	}
 
+	/**
+	 * Returns number of iterations performed so far.
+	 * 
+	 * @return current iteration number
+	 */
 	protected int getCurrentLayoutStep() {
 		return iteration;
 	}
 
+	/**
+	 * Returns total number of iterations this algorithm performs.
+	 * 
+	 * @return iteration limit
+	 */
 	protected int getTotalNumberOfLayoutSteps() {
 		return sprIterations;
 	}
 
+	/**
+	 * Performs one iteration of the simulation: computes forces, moves the
+	 * nodes, adjusts bounds scaling and recenters the layout.
+	 */
 	protected void computeOneIteration() {
 		computeForces();
 		computePositions();

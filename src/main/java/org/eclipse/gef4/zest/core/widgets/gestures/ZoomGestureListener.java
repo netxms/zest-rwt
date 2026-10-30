@@ -20,6 +20,8 @@ import org.eclipse.swt.events.GestureListener;
  * 
  * @author Zoltan Ujhelyi
  * @since 2.0
+ * 
+ * @serial exclude
  */
 public class ZoomGestureListener implements GestureListener {
 

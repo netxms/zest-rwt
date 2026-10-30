@@ -67,25 +67,42 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
 /**
+ * The graph widget. It is the root container of a graph: it owns the nodes,
+ * connections and containers added to it, draws them on a draw2d canvas,
+ * applies layout algorithms and handles selection, dragging and fish eye
+ * zooming.
+ * 
  * @since 1.0
+ * 
+ * @serial exclude
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Graph extends FigureCanvas implements IContainer {
 
 	// CLASS CONSTANTS
+	/** Duration in milliseconds of the animation run when a layout is applied. */
 	public static final int ANIMATION_TIME = 500;
+	/** Duration in milliseconds of the animation run when a fish eye figure is shown or hidden. */
 	public static final int FISHEYE_ANIMATION_TIME = 100;
 
 	// @tag CGraph.Colors : These are the colour constants for the graph, they
 	// are disposed on clean-up
+	/** Default node background color. Disposed when the graph is disposed. */
 	public Color LIGHT_BLUE = new Color(null, 216, 228, 248);
+	/** Light cyan-blue color available for graph items. Disposed when the graph is disposed. */
 	public Color LIGHT_BLUE_CYAN = new Color(null, 213, 243, 255);
+	/** Grey-blue color available for graph items. Disposed when the graph is disposed. */
 	public Color GREY_BLUE = new Color(null, 139, 150, 171);
+	/** Default node text color and connection highlight color. Disposed when the graph is disposed. */
 	public Color DARK_BLUE = new Color(null, 1, 70, 122);
+	/** Light yellow color available for graph items. Disposed when the graph is disposed. */
 	public Color LIGHT_YELLOW = new Color(null, 255, 255, 206);
 
+	/** Default background color of highlighted nodes. */
 	public Color HIGHLIGHT_COLOR = ColorConstants.yellow();
+	/** Color used for nodes adjacent to a highlighted node. */
 	public Color HIGHLIGHT_ADJACENT_COLOR = ColorConstants.orange();
+	/** Default node background color, same as {@link #LIGHT_BLUE}. */
 	public Color DEFAULT_NODE_COLOR = LIGHT_BLUE;
 
 	/**
@@ -93,6 +110,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * and connections that have added themselves to this graph.
 	 */
 	private List nodes;
+	/** All connections that have added themselves to this graph. */
 	protected List connections;
 	HashSet subgraphFigures;
 	private List selectedItems = null;
@@ -128,7 +146,10 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * and can contain graph items such as graph nodes and graph connections.
 	 * 
 	 * @param parent
+	 *            composite the graph canvas is created in
 	 * @param style
+	 *            SWT style bits for the canvas, optionally combined with graph
+	 *            styles from {@link ZestStyles}
 	 * @see ZestStyles#GESTURES_DISABLED
 	 */
 	public Graph(Composite parent, int style) {
@@ -245,6 +266,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * selection event occurs.
 	 * 
 	 * @param selectionListener
+	 *            listener to notify when the selection changes
 	 */
 	public void addSelectionListener(SelectionListener selectionListener) {
 		if (!selectionListeners.contains(selectionListener)) {
@@ -252,6 +274,14 @@ public class Graph extends FigureCanvas implements IContainer {
 		}
 	}
 
+	/**
+	 * Removes a listener added with
+	 * {@link #addSelectionListener(SelectionListener)}. Does nothing if the
+	 * listener was not added.
+	 * 
+	 * @param selectionListener
+	 *            listener to remove
+	 */
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		if (selectionListeners.contains(selectionListener)) {
 			selectionListeners.remove(selectionListener);
@@ -272,7 +302,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	/**
 	 * Gets the root layer for this graph
 	 * 
-	 * @return
+	 * @return the scalable root layer that holds all other layers of the graph
 	 */
 	public ScalableFigure getRootLayer() 
 	{
@@ -282,7 +312,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	/**
 	 * Get root layer for zest objects (nodes, connections, etc.)
 	 * 
-	 * @return
+	 * @return the layer that holds node, connection and subgraph figures
 	 */
 	public FreeformLayer getZestRootLayer()
 	{
@@ -344,6 +374,8 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * Changes the selection to the list of items
 	 * 
 	 * @param items
+	 *            items to select; null entries are ignored and null clears
+	 *            the selection
 	 */
 	public void setSelection(GraphItem[] items) {
 		clearSelection();
@@ -356,6 +388,9 @@ public class Graph extends FigureCanvas implements IContainer {
 		}
 	}
 
+	/**
+	 * Selects all nodes of this graph.
+	 */
 	public void selectAll() {
 		setSelection((GraphItem[]) nodes.toArray(new GraphItem[] {}));
 	}
@@ -415,6 +450,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * it's not actually a dynamic algorithm.
 	 * 
 	 * @param enabled
+	 *            true to enable dynamic layout, false to disable it
 	 * 
 	 * @since 2.0
 	 */
@@ -493,7 +529,9 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * current canvas size.
 	 * 
 	 * @param width
+	 *            preferred width of the layout area, or -1
 	 * @param height
+	 *            preferred height of the layout area, or -1
 	 */
 	public void setPreferredSize(int width, int height) {
 		this.preferredSize = new Dimension(width, height);
@@ -515,6 +553,10 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Returns the layout context that layout algorithms operate on, creating
+	 * it on first use.
+	 * 
+	 * @return the layout context of this graph
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public InternalLayoutContext getLayoutContext() {
@@ -525,7 +567,13 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Sets the layout algorithm used by this graph and optionally applies it
+	 * right away.
+	 * 
 	 * @param algorithm
+	 *            the layout algorithm to use
+	 * @param applyLayout
+	 *            true to run the algorithm immediately
 	 * @since 2.0
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm,
@@ -537,6 +585,9 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Returns the layout algorithm used by this graph.
+	 * 
+	 * @return the current layout algorithm, or null if none has been set
 	 * @since 2.0
 	 */
 	public LayoutAlgorithm getLayoutAlgorithm() {
@@ -544,6 +595,11 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Sets the factory used to create subgraphs when nodes are collapsed or
+	 * pruned by a layout algorithm.
+	 * 
+	 * @param factory
+	 *            the subgraph factory to use
 	 * @since 2.0
 	 */
 	public void setSubgraphFactory(SubgraphFactory factory) {
@@ -551,6 +607,9 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Returns the factory used to create subgraphs.
+	 * 
+	 * @return the current subgraph factory
 	 * @since 2.0
 	 */
 	public SubgraphFactory getSubgraphFactory() {
@@ -558,6 +617,11 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Sets the manager that controls expanding and collapsing of nodes, and
+	 * enables dynamic layout so that the manager is applied.
+	 * 
+	 * @param expandCollapseManager
+	 *            the expand/collapse manager to use
 	 * @since 2.0
 	 */
 	public void setExpandCollapseManager(
@@ -567,6 +631,10 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Returns the manager that controls expanding and collapsing of nodes.
+	 * 
+	 * @return the current expand/collapse manager, or null if none has been
+	 *         set
 	 * @since 2.0
 	 */
 	public ExpandCollapseManager getExpandCollapseManager() {
@@ -604,6 +672,13 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * Finds a figure at the location X, Y in the graph
 	 * 
 	 * This point should be translated to relative before calling findFigureAt
+	 * 
+	 * @param x
+	 *            x coordinate relative to the graph contents
+	 * @param y
+	 *            y coordinate relative to the graph contents
+	 * @return the node, connection or container figure at the given point,
+	 *         or null if there is none
 	 */
 	public IFigure getFigureAt(int x, int y) {
 		IFigure figureUnderMouse = this.getContents().findFigureAt(x, y,
@@ -1271,6 +1346,11 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Removes a listener added with
+	 * {@link #addFisheyeListener(FisheyeListener)}.
+	 * 
+	 * @param listener
+	 *            listener to remove
 	 * @since 2.0
 	 */
 	public void removeFisheyeListener(FisheyeListener listener) {
@@ -1286,6 +1366,13 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Expands or collapses the given node using the expand/collapse manager
+	 * and invalidates the root layer so the change is drawn.
+	 * 
+	 * @param node
+	 *            node to expand or collapse
+	 * @param expanded
+	 *            true to expand the node, false to collapse it
 	 * @since 2.0
 	 */
 	public void setExpanded(GraphNode node, boolean expanded) {
@@ -1294,6 +1381,12 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Checks whether the given node can be expanded by the expand/collapse
+	 * manager.
+	 * 
+	 * @param node
+	 *            node to check
+	 * @return true if the node can be expanded
 	 * @since 2.0
 	 */
 	public boolean canExpand(GraphNode node) {
@@ -1301,6 +1394,12 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Checks whether the given node can be collapsed by the expand/collapse
+	 * manager.
+	 * 
+	 * @param node
+	 *            node to check
+	 * @return true if the node can be collapsed
 	 * @since 2.0
 	 */
 	public boolean canCollapse(GraphNode node) {
@@ -1416,6 +1515,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * that have no connection routers set to them.
 	 * 
 	 * @param connectionRouter
+	 *            the new default connection router
 	 * @since 2.0
 	 */
 	public void setRouter(ConnectionRouter connectionRouter) {

@@ -55,6 +55,8 @@ import org.eclipse.swt.widgets.Widget;
  * properties as the nodes. Containers cannot have custom figures.
  * 
  * @author Ian Bull
+ * 
+ * @serial exclude
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class GraphContainer extends GraphNode implements IContainer {
@@ -287,6 +289,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * @param graph
 	 *            The graph that the container is being added to
 	 * @param style
+	 *            node style bits (see {@link ZestStyles})
 	 * 
 	 * @since 2.0
 	 */
@@ -299,9 +302,20 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
+	 * Creates a new GraphContainer with the given label text and image.
+	 * 
+	 * @param graph
+	 *            The graph that the container is being added to
+	 * @param style
+	 *            node style bits (see {@link ZestStyles})
+	 * @param text
+	 *            label text of the container
+	 * @param image
+	 *            image shown in the container's label
 	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)},
 	 *             {@link #setText(String)}, and {@link #setImage(Image)}
 	 */
+	@Deprecated
 	public GraphContainer(Graph graph, int style, String text, Image image) {
 		this(graph, style);
 		setText(text);
@@ -309,14 +323,24 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
+	 * Creates a new GraphContainer in the graph of the given container.
+	 * 
+	 * @param container
+	 *            container whose graph the new container is added to
+	 * @param style
+	 *            node style bits (see {@link ZestStyles})
 	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)}.
 	 */
+	@Deprecated
 	public GraphContainer(GraphContainer container, int style) {
 		this(container.getGraph(), style);
 	}
 
 	/**
 	 * Custom figures cannot be set on a GraphContainer.
+	 * 
+	 * @param nodeFigure
+	 *            ignored; a RuntimeException is always thrown
 	 */
 	public void setCustomFigure(IFigure nodeFigure) {
 		throw new RuntimeException(
@@ -327,6 +351,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * Close this node.
 	 * 
 	 * @param animate
+	 *            true to animate the transition
 	 */
 	public void close(boolean animate) {
 		if (animate) {
@@ -506,6 +531,9 @@ public class GraphContainer extends GraphNode implements IContainer {
 	/**
 	 * Open the container. This opens the graph container to show the nodes
 	 * within and update the twistie
+	 * 
+	 * @param animate
+	 *            true to animate the transition
 	 */
 	public void open(boolean animate) {
 		if (animate) {
@@ -699,7 +727,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * Get the scale for this container. This is the scale applied to the
 	 * children contained within
 	 * 
-	 * @return
+	 * @return current scale factor of the children
 	 */
 	public double getScale() {
 		return this.scalledLayer.getScale();
@@ -710,6 +738,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * children contained within.
 	 * 
 	 * @param scale
+	 *            new scale factor of the children
 	 */
 	public void setScale(double scale) {
 		this.scalledLayer.setScale(scale);
@@ -964,6 +993,9 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
+	 * Returns the layout algorithm used for nodes inside this container.
+	 * 
+	 * @return the container's layout algorithm
 	 * @since 2.0
 	 */
 	public LayoutAlgorithm getLayoutAlgorithm() {

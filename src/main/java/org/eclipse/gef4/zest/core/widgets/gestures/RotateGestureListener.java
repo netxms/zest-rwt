@@ -25,6 +25,7 @@ import org.eclipse.swt.events.GestureListener;
  * 
  * @author Zoltan Ujhelyi
  * 
+ * @serial exclude
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class RotateGestureListener implements GestureListener {
